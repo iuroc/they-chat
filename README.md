@@ -2,7 +2,6 @@
 
 ## 开发环境
 
-```bash
-tsc -w
-grunt
-```
+1. 安装依赖：`yarn`
+2. 自动编译 TypeScript：`tsc -w`
+3. 自动打包：`npx grunt`
