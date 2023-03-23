@@ -15,6 +15,12 @@ body {
     height: 100%;
 }
 
+[role="button"],
+a {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     margin: 0;
     display: flex;
@@ -30,13 +36,14 @@ body {
     background-color: rgb(255, 255, 255, .9);
     box-shadow: 0 0 10px #cccccc;
     display: flex;
-    border-radius: 5px;   
-    overflow: hidden;  
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 
 @media screen and (max-height: 700px) {
     .window {
         height: 100%;
+        border-radius: 0;
     }
 }
