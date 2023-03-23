@@ -1,6 +1,6 @@
 FROM node
-ADD . /src/app
-WORKDIR /src/app
+ADD . /usr/app
+WORKDIR /usr/app
 RUN yarn install --production=true --ignore-scripts
 RUN yarn add http-server
 EXPOSE 3004
