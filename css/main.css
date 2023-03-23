@@ -38,6 +38,7 @@ body {
     display: flex;
     border-radius: 5px;
     overflow: hidden;
+    transition: all .3s;
 }
 
 
