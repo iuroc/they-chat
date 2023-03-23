@@ -1,0 +1,20 @@
+.left-menu-bar {
+    height: 100%;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(46, 46, 46);
+}
+
+.left-menu-bar .avatar {
+    width: 35px;
+    margin-top: 30px;
+    margin-bottom: 25px;
+}
+
+.menu-btns .menu-icon {
+    width: 20px;
+    margin-bottom: 20px;
+    display: block;
+}

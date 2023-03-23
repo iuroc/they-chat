@@ -1,0 +1,39 @@
+:root {
+    /* 窗口最大宽度 */
+    --window-max-width: 1200px;
+    /* 窗口最大高度 */
+    --window-max-height: 700px;
+}
+
+html,
+* {
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+}
+
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('../img/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.window {
+    width: var(--window-max-width);
+    height: var(--window-max-height);
+    background-color: rgb(255, 255, 255, .9);
+    box-shadow: 0 0 10px #eeeeee;
+}
+
+
+@media screen and (max-height: 700px) {
+    .window {
+        height: 100%;
+    }
+}
