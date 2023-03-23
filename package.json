@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "在线聊天室",
   "scripts": {
-    
+    "build": "browserify dist/index.js -o dist/bundle.js"
   },
   "author": "oyps",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-exec": "^3.0.0"
+  }
 }

@@ -1,0 +1,1 @@
+document.ondragstart = () => false
