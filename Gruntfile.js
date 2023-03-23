@@ -3,7 +3,7 @@ module.exports = grunt => {
         watch: {
             scripts: {
                 files: ['dist/index.js'],
-                tasks: ['exec'],
+                tasks: ['exec:build'],
                 options: { spawn: false }
             }
         },

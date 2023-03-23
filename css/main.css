@@ -5,12 +5,12 @@
     --window-max-height: 700px;
 }
 
-html,
 * {
-    word-wrap: break-word !important;
-    word-break: break-all !important;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
+html,
 body {
     height: 100%;
 }
@@ -28,7 +28,10 @@ body {
     width: var(--window-max-width);
     height: var(--window-max-height);
     background-color: rgb(255, 255, 255, .9);
-    box-shadow: 0 0 10px #eeeeee;
+    box-shadow: 0 0 10px #cccccc;
+    display: flex;
+    border-radius: 5px;   
+    overflow: hidden;  
 }
 
 

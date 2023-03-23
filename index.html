@@ -14,13 +14,33 @@
     <div class="window">
         <div class="left-menu-bar">
             <img src="./img/icon.jpg" class="avatar">
-            <div class="menu-btns">
-                <img src="./img/chat-fill.svg" class="menu-icon">
-                <img src="./img/chat-fill.svg" class="menu-icon">
+            <div class="menu-list menu-tab-list">
+                <a href="#" class="menu-item" data-target="home">
+                    <img class="icon">
+                </a>
+                <a href="#/friend" class="menu-item" data-target="friend">
+                    <img class="icon">
+                </a>
+                <a href="#/about" class="menu-item" data-target="about">
+                    <img class="icon">
+                </a>
+            </div>
+            <div class="menu-list menu-bottom-list">
+                <a class="menu-item">
+                    <img class="icon" src="./img/box-arrow-right.svg">
+                </a>
             </div>
         </div>
         <div class="window-body">
-
+            <div class="poncon-home poncon-page" style="display: none;">
+                聊天界面
+            </div>
+            <div class="poncon-friend poncon-page" style="display: none;">
+                好友列表
+            </div>
+            <div class="poncon-about poncon-page" style="display: none;">
+                关于项目
+            </div>
         </div>
     </div>
     <script src="./dist/bundle.js"></script>
