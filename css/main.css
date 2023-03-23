@@ -10,6 +10,12 @@
     word-break: break-all;
 }
 
+.user-select-none {
+    user-select: none !important;
+    -moz-user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
 html,
 body {
     height: 100%;
@@ -38,7 +44,7 @@ body {
     display: flex;
     border-radius: 5px;
     overflow: hidden;
-    transition: all .3s;
+    transition: height .3s;
 }
 
 
@@ -54,4 +60,32 @@ body {
         height: 100%;
         border-radius: 0;
     }
+}
+
+
+.window-body {
+    flex: 1;
+    height: 100%;
+}
+
+.poncon-page {
+    height: 100%;
+    display: flex;
+}
+
+
+/* 滚动条宽度 */
+.poncon-home .group-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* 滚动条滑块颜色 */
+.poncon-home .group-list:hover::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 2px;
+}
+
+/* 滚动条鼠标滑过 */
+.poncon-home .group-list::-webkit-scrollbar-thumb:hover {
+    background-color: #aaaaaa !important;
 }

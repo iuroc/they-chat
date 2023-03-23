@@ -1,0 +1,83 @@
+/* 消息列表 */
+.poncon-home .group-list {
+    width: 300px;
+    height: 100%;
+    border-right: 1px solid rgb(214, 214, 214);
+    overflow: auto;
+}
+
+/* 聊天窗口 */
+.poncon-home .chat-window {
+    flex: 1;
+}
+
+.group-list .group-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    white-space: nowrap;
+    transition: background-color .2s;
+}
+
+.group-list .group-item:hover {
+    background-color: rgb(200, 200, 200, .8);
+}
+
+.group-list .group-item:hover .time {
+    color: rgb(150, 150, 150);
+}
+
+.group-list .group-item:not(:last-child) {
+    border-bottom: 1px dashed rgb(220, 220, 220, .5);
+}
+
+.group-list .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid rgb(240, 240, 240);
+    margin-right: 10px;
+}
+
+.group-list .body {
+    flex: 1;
+    overflow: hidden;
+}
+
+.group-list .header {
+    margin-bottom: 5px;
+    flex: 1;
+    display: flex;
+}
+
+.group-list .group-title {
+    font-weight: 600;
+    margin-right: auto;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.group-list .time {
+    color: rgb(200, 200, 200);
+    margin-left: 5px;
+}
+
+.group-list .group-msg {
+    color: rgb(150, 150, 150);
+    font-weight: 300;
+}
+
+
+.chat-window .header {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid rgb(200, 200, 200);
+    align-items: center;
+    overflow: hidden;
+}
+
+.chat-window .header .title {
+    font-size: 20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

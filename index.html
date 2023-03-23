@@ -8,11 +8,12 @@
     <title>TheyChat</title>
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/left-menu-bar.css">
+    <link rel="stylesheet" href="./css/home.css">
 </head>
 
 <body>
     <div class="window">
-        <div class="left-menu-bar">
+        <div class="left-menu-bar user-select-none">
             <img src="./img/icon.jpg" class="avatar">
             <div class="menu-list menu-tab-list">
                 <a href="#" class="menu-item" data-target="home">
@@ -33,7 +34,39 @@
         </div>
         <div class="window-body">
             <div class="poncon-home poncon-page" style="display: none;">
-                聊天界面
+                <div class="group-list user-select-none">
+                    <!-- <div class="group-item" role="button">
+                        <img src="./img/icon.jpg" class="avatar">
+                        <div class="body">
+                            <div class="header">
+                                <div class="group-title">鹏优创官方交流群</div>
+                                <div class="time">23/3/10</div>
+                            </div>
+                            <div class="group-msg">群主：快来抢红包！！！</div>
+                        </div>
+                    </div> -->
+                    <script>
+                        for (let i = 0; i < 20; i++) {
+                            document.write(`
+                            <div class="group-item" role="button">
+                                <img src="./img/icon.jpg" class="avatar">
+                                <div class="body">
+                                    <div class="header">
+                                        <div class="group-title">鹏优创官方交流群</div>
+                                        <div class="time">23/3/10</div>
+                                    </div>
+                                    <div class="group-msg">群主：快来抢红包！！！</div>
+                                </div>
+                            </div>
+                            `)
+                        }
+                    </script>
+                </div>
+                <div class="chat-window">
+                    <div class="header user-select-none">
+                        <div class="title">鹏优创官方交流群（189）</div>
+                    </div>
+                </div>
             </div>
             <div class="poncon-friend poncon-page" style="display: none;">
                 好友列表
