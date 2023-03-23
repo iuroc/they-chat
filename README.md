@@ -12,4 +12,5 @@
 git clone https://github.com/oyps/they-chat
 docker build -t they-chat-image they-chat
 docker run --name they-chat -p 3004:3004 -d they-chat-image
+rm -rf they-chat
 ```
