@@ -39,7 +39,7 @@ body {
 .window {
     width: var(--window-max-width);
     height: var(--window-max-height);
-    background-color: rgb(255, 255, 255, .9);
+    background-color: rgba(255, 255, 255, .9);
     box-shadow: 0 0 10px #cccccc;
     display: flex;
     border-radius: 5px;

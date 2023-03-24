@@ -20,7 +20,7 @@
 }
 
 .group-list .group-item:hover {
-    background-color: rgb(200, 200, 200, .8);
+    background-color: rgba(200, 200, 200, 0.8)
 }
 
 .group-list .group-item:hover .time {
@@ -28,7 +28,7 @@
 }
 
 .group-list .group-item:not(:last-child) {
-    border-bottom: 1px dashed rgb(220, 220, 220, .5);
+    border-bottom: 1px dashed rgba(220, 220, 220, .5);
 }
 
 .group-list .avatar {
