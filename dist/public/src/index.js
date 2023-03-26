@@ -68,7 +68,7 @@ function setResizeDiv() {
             return;
         var changeHeight = event.pageY - startY;
         var height = startHeight - changeHeight;
-        if (height > 500)
+        if (height > 400)
             return;
         if (height < 150)
             return;

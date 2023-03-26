@@ -75,7 +75,7 @@ function setResizeDiv() {
         if (!isSelected) return
         const changeHeight = event.pageY - startY
         let height = startHeight - changeHeight
-        if (height > 500) return
+        if (height > 400) return
         if (height < 150) return
         inputBoxEle.style.height = height + 'px'
     })
