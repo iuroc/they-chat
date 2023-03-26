@@ -6,6 +6,12 @@
 2. 自动编译 TypeScript：`yarn tsc -w`
 3. 自动打包：`yarn grunt`
 
+## 运行项目
+
+```bash
+yarn http-server
+```
+
 ## Docker 部署
 
 ```bash
