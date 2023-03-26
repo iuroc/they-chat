@@ -7,7 +7,7 @@ document.ondragstart = function () { return false; };
 /** 配置路由 */
 function router() {
     var poncon = new ponconjs_1.default();
-    poncon.setPageList(['home', 'friend', 'about']);
+    poncon.setPageList(['home', 'friend', 'about', 'login', 'user']);
     // 主页
     poncon.setPage('home', function () {
     });
@@ -16,6 +16,12 @@ function router() {
     });
     // 关于
     poncon.setPage('about', function () {
+    });
+    // 个人信息
+    poncon.setPage('login', function () {
+    });
+    // 登录注册
+    poncon.setPage('login', function () {
     });
     poncon.start();
     autoMenuStats(poncon);
@@ -38,6 +44,7 @@ function changeMenuStats(poncon) {
         home: ['./img/chat-fill.svg', './img/chat.svg'],
         friend: ['./img/person-vcard-fill.svg', './img/person-vcard.svg'],
         about: ['./img/info-circle-fill.svg', './img/info-circle.svg'],
+        user: ['./img/person-fill.svg', './img/person.svg'],
     };
     menuTabItemEles.forEach(function (menuTabItemEles) {
         var target = menuTabItemEles.getAttribute('data-target');

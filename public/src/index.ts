@@ -5,11 +5,10 @@ setResizeDiv()
 
 document.ondragstart = () => false
 
-
 /** 配置路由 */
 function router() {
     const poncon = new Poncon()
-    poncon.setPageList(['home', 'friend', 'about'])
+    poncon.setPageList(['home', 'friend', 'about', 'login', 'user'])
     // 主页
     poncon.setPage('home', () => {
 
@@ -20,6 +19,14 @@ function router() {
     })
     // 关于
     poncon.setPage('about', () => {
+
+    })
+    // 个人信息
+    poncon.setPage('login', () => {
+
+    })
+    // 登录注册
+    poncon.setPage('login', () => {
 
     })
     poncon.start()
@@ -45,6 +52,7 @@ function changeMenuStats(poncon: Poncon) {
         home: ['./img/chat-fill.svg', './img/chat.svg'],
         friend: ['./img/person-vcard-fill.svg', './img/person-vcard.svg'],
         about: ['./img/info-circle-fill.svg', './img/info-circle.svg'],
+        user: ['./img/person-fill.svg', './img/person.svg'],
     }
     menuTabItemEles.forEach(menuTabItemEles => {
         let target = menuTabItemEles.getAttribute('data-target') as string
