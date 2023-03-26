@@ -1,6 +1,7 @@
 import Poncon from 'ponconjs'
 
 router()
+setResizeDiv()
 
 document.ondragstart = () => false
 
@@ -47,5 +48,30 @@ function changeMenuStats(poncon: Poncon) {
         const icon = icons[target]
         const imgEle = menuTabItemEles.querySelector('img') as HTMLImageElement
         imgEle.src = target == activeTarget ? icon[0] : icon[1]
+    })
+}
+
+function setResizeDiv() {
+    const ele = document.querySelector('.chat-input-box .change-position') as HTMLDivElement
+    const inputBoxEle = document.querySelector('.chat-input-box') as HTMLDivElement
+    let isSelected = false
+    let startHeight = 0
+    let startY = 0
+    ele?.addEventListener('mousedown', (event) => {
+        isSelected = true
+        startHeight = inputBoxEle.offsetHeight
+        startY = event.pageY
+        document.body.style.cursor = 'ns-resize'
+    })
+    document.body.addEventListener('mouseup', (event) => {
+        isSelected = false
+        document.body.style.cursor = ''
+    })
+    document.body.addEventListener('mousemove', (event) => {
+        if (!isSelected) return
+        const changeHeight = event.pageY - startY
+        let height = startHeight - changeHeight
+        if (height > 500) height = 500
+        inputBoxEle.style.height = height + 'px'
     })
 }

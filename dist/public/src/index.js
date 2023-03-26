@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ponconjs_1 = require("ponconjs");
 router();
+setResizeDiv();
 document.ondragstart = function () { return false; };
 /** 配置路由 */
 function router() {
@@ -40,5 +41,31 @@ function changeMenuStats(poncon) {
         var icon = icons[target];
         var imgEle = menuTabItemEles.querySelector('img');
         imgEle.src = target == activeTarget ? icon[0] : icon[1];
+    });
+}
+function setResizeDiv() {
+    var ele = document.querySelector('.chat-input-box .change-position');
+    var inputBoxEle = document.querySelector('.chat-input-box');
+    var isSelected = false;
+    var startHeight = 0;
+    var startY = 0;
+    ele === null || ele === void 0 ? void 0 : ele.addEventListener('mousedown', function (event) {
+        isSelected = true;
+        startHeight = inputBoxEle.offsetHeight;
+        startY = event.pageY;
+        document.body.style.cursor = 'ns-resize';
+    });
+    document.body.addEventListener('mouseup', function (event) {
+        isSelected = false;
+        document.body.style.cursor = '';
+    });
+    document.body.addEventListener('mousemove', function (event) {
+        if (!isSelected)
+            return;
+        var changeHeight = event.pageY - startY;
+        var height = startHeight - changeHeight;
+        if (height > 500)
+            height = 500;
+        inputBoxEle.style.height = height + 'px';
     });
 }
