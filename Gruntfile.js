@@ -2,7 +2,7 @@ module.exports = grunt => {
     grunt.initConfig({
         watch: {
             scripts: {
-                files: ['dist/index.js'],
+                files: ['dist/public/index.js'],
                 tasks: ['exec:build'],
                 options: { spawn: false }
             }
