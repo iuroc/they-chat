@@ -8,10 +8,13 @@ document.ondragstart = function () { return false; };
 function router() {
     var poncon = new ponconjs_1.default();
     poncon.setPageList(['home', 'friend', 'about']);
+    // 主页
     poncon.setPage('home', function () {
     });
+    // 通讯录
     poncon.setPage('friend', function () {
     });
+    // 关于
     poncon.setPage('about', function () {
     });
     poncon.start();
@@ -43,6 +46,7 @@ function changeMenuStats(poncon) {
         imgEle.src = target == activeTarget ? icon[0] : icon[1];
     });
 }
+/** 拖拽聊天输入框上边框，实现高度调整 */
 function setResizeDiv() {
     var ele = document.querySelector('.chat-input-box .change-position');
     var inputBoxEle = document.querySelector('.chat-input-box');
@@ -65,7 +69,9 @@ function setResizeDiv() {
         var changeHeight = event.pageY - startY;
         var height = startHeight - changeHeight;
         if (height > 500)
-            height = 500;
+            return;
+        if (height < 150)
+            return;
         inputBoxEle.style.height = height + 'px';
     });
 }

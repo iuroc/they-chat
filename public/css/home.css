@@ -23,8 +23,12 @@
     transition: background-color .2s;
 }
 
-.group-list .group-item:hover {
+.group-list .group-item.active {
     background-color: rgba(200, 200, 200, 0.8)
+}
+
+.group-list .group-item:hover {
+    background-color: rgba(200, 200, 200, 0.5)
 }
 
 .group-list .group-item:hover .time {
@@ -92,7 +96,8 @@
 }
 
 .chat-window .chat-input-box {
-    height: 100px;
+    transition: height .05s;
+    height: 150px;
     border-top: 1px solid rgb(200, 200, 200);
     position: relative;
     background-color: rgba(255, 255, 255, 0.5);

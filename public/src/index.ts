@@ -10,12 +10,15 @@ document.ondragstart = () => false
 function router() {
     const poncon = new Poncon()
     poncon.setPageList(['home', 'friend', 'about'])
+    // 主页
     poncon.setPage('home', () => {
 
     })
+    // 通讯录
     poncon.setPage('friend', () => {
 
     })
+    // 关于
     poncon.setPage('about', () => {
 
     })
@@ -51,6 +54,7 @@ function changeMenuStats(poncon: Poncon) {
     })
 }
 
+/** 拖拽聊天输入框上边框，实现高度调整 */
 function setResizeDiv() {
     const ele = document.querySelector('.chat-input-box .change-position') as HTMLDivElement
     const inputBoxEle = document.querySelector('.chat-input-box') as HTMLDivElement
@@ -71,7 +75,8 @@ function setResizeDiv() {
         if (!isSelected) return
         const changeHeight = event.pageY - startY
         let height = startHeight - changeHeight
-        if (height > 500) height = 500
+        if (height > 500) return
+        if (height < 150) return
         inputBoxEle.style.height = height + 'px'
     })
 }
