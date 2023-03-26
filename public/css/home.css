@@ -127,6 +127,7 @@
 
 .msg-list .msg-body {
     max-width: 500px;
+    overflow: hidden;
 }
 
 
@@ -230,4 +231,10 @@
 }
 .chat-input-box .send-btn img {
     margin-right: 10px;
+}
+
+@media screen and (max-width: 800px) {
+    .poncon-home .group-list {
+        display: none;
+    }
 }
