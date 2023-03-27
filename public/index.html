@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/left-menu-bar.css">
     <link rel="stylesheet" href="./css/home.css">
+    <link rel="stylesheet" href="./css/login.css">
 </head>
 
 <body>
@@ -102,8 +103,22 @@
             <div class="poncon-about poncon-page" style="display: none;">
                 关于项目
             </div>
-            <div class="poncon-login poncon-page" style="display: none;">
-                登录注册
+            <div class="poncon-login poncon-page user-select-none" style="display: none;">
+                <div class="box login">
+                    <div class="title">用户登录</div>
+                    <input type="text" class="input-username input" placeholder="用户名">
+                    <input type="text" class="input-password input" placeholder="密码">
+                    <div class="login-btn" role="button">登录</div>
+                    <div class="msg register-msg" role="button">没有账号？点击注册</div>
+                </div>
+                <div class="box register">
+                    <div class="title">用户注册</div>
+                    <input type="text" class="input-username input" placeholder="用户名">
+                    <input type="text" class="input-password input" placeholder="密码">
+                    <input type="text" class="input-password2 input" placeholder="重复">
+                    <div class="login-btn" role="button">注册</div>
+                    <div class="msg login-msg" role="button">已有账号？点击登录</div>
+                </div>
             </div>
             <div class="poncon-user poncon-page" style="display: none;">
                 个人中心

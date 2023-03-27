@@ -8,7 +8,7 @@ module.exports = grunt => {
             }
         },
         exec: {
-            build: 'yarn run build'
+            build: 'browserify dist/public/src/index.js -o dist/public/src/bundle.js'
         }
     })
     grunt.loadNpmTasks('grunt-contrib-watch')

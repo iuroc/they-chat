@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var ponconjs_1 = require("ponconjs");
 router();
 setResizeDiv();
+addClickEvent();
 document.ondragstart = function () { return false; };
 /** 配置路由 */
 function router() {
@@ -81,6 +82,25 @@ function setResizeDiv() {
         if (height < 150)
             return;
         inputBoxEle.style.height = height + 'px';
+    });
+}
+/** 为初始载入的元素添加单击事件 */
+function addClickEvent() {
+    /** 提示：已有账号？点击登录 */
+    var loginMsg = document.querySelector('.poncon-login .login-msg');
+    /** 提示：没有账号？点击注册 */
+    var registerMsg = document.querySelector('.poncon-login .register-msg');
+    /** 登录盒子 */
+    var loginBoxEle = document.querySelector('.poncon-login .box.login');
+    /** 注册盒子 */
+    var registerBoxEle = document.querySelector('.poncon-login .box.register');
+    loginMsg.addEventListener('click', function () {
+        loginBoxEle.style.display = 'block';
+        registerBoxEle.style.display = 'none';
+    });
+    registerMsg.addEventListener('click', function () {
+        loginBoxEle.style.display = 'none';
+        registerBoxEle.style.display = 'block';
     });
 }
 

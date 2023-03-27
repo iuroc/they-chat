@@ -2,7 +2,7 @@ import Poncon from 'ponconjs'
 
 router()
 setResizeDiv()
-
+addClickEvent()
 document.ondragstart = () => false
 
 /** 配置路由 */
@@ -86,5 +86,25 @@ function setResizeDiv() {
         if (height > 400) return
         if (height < 150) return
         inputBoxEle.style.height = height + 'px'
+    })
+}
+
+/** 为初始载入的元素添加单击事件 */
+function addClickEvent() {
+    /** 提示：已有账号？点击登录 */
+    const loginMsg = document.querySelector('.poncon-login .login-msg') as HTMLDivElement
+    /** 提示：没有账号？点击注册 */
+    const registerMsg = document.querySelector('.poncon-login .register-msg') as HTMLDivElement
+    /** 登录盒子 */
+    const loginBoxEle = document.querySelector('.poncon-login .box.login') as HTMLDivElement
+    /** 注册盒子 */
+    const registerBoxEle = document.querySelector('.poncon-login .box.register') as HTMLDivElement
+    loginMsg.addEventListener('click', () => {
+        loginBoxEle.style.display = 'block'
+        registerBoxEle.style.display = 'none'
+    })
+    registerMsg.addEventListener('click', () => {
+        loginBoxEle.style.display = 'none'
+        registerBoxEle.style.display = 'block'
     })
 }
