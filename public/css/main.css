@@ -9,6 +9,7 @@
     word-wrap: break-word;
     word-break: break-all;
     box-sizing: border-box;
+    font-family: '仓耳渔阳体';
 }
 
 .user-select-none {

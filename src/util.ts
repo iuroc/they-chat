@@ -4,6 +4,7 @@ import { Pool } from 'mysql2'
 /** 执行响应 */
 function printOut(res: ApiResponse, data: any, message: string, code: number) {
     if (res.hasSent) return
+    res.hasSent = true
     const jsonData: ApiResponseBody = {
         code: code,
         msg: message,

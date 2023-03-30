@@ -5,6 +5,7 @@ exports.printErr = exports.printSuc = void 0;
 function printOut(res, data, message, code) {
     if (res.hasSent)
         return;
+    res.hasSent = true;
     var jsonData = {
         code: code,
         msg: message,

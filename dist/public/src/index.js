@@ -1,10 +1,42 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ponconjs_1 = require("ponconjs");
+var DATA = {
+    /** 是否联网校验过 */
+    hasVerLogin: false,
+    /** 是否登录 */
+    hasLogin: false
+};
+verLogin();
 router();
 setResizeDiv();
 addClickEvent();
 document.ondragstart = function () { return false; };
+/** 判断登录状态 */
+function verLogin() {
+    var target = location.hash.split('/')[1];
+    if (target == 'login' && DATA.hasLogin)
+        return location.hash = '';
+    if (!DATA.hasVerLogin) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/login', false);
+        xhr.send();
+        var resData = JSON.parse(xhr.responseText);
+        var code = resData.code;
+        if (code == 200) {
+            DATA.hasLogin = true;
+            if (target == 'login')
+                location.hash = '';
+        }
+        else
+            location.hash = '#/login';
+        DATA.hasVerLogin = true;
+    }
+    else {
+        if (!DATA.hasLogin)
+            location.hash = '#/login';
+    }
+}
 /** 配置路由 */
 function router() {
     var poncon = new ponconjs_1.default();
@@ -24,6 +56,7 @@ function router() {
     // 登录注册
     poncon.setPage('login', function () {
     });
+    window.addEventListener('hashchange', verLogin);
     poncon.start();
     autoMenuStats(poncon);
 }

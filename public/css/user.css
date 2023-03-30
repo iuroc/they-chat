@@ -1,0 +1,18 @@
+
+.poncon-user .box {
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+}
+.poncon-user .nav-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.poncon-user .btn {
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #555555;
+    color: white;
+    display: inline-block;
+}

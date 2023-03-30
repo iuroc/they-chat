@@ -1,9 +1,36 @@
 import Poncon from 'ponconjs'
 
+const DATA = {
+    /** 是否联网校验过 */
+    hasVerLogin: false,
+    /** 是否登录 */
+    hasLogin: false
+}
+verLogin()
 router()
 setResizeDiv()
 addClickEvent()
 document.ondragstart = () => false
+
+/** 判断登录状态 */
+function verLogin() {
+    const target = location.hash.split('/')[1]
+    if (target == 'login' && DATA.hasLogin) return location.hash = ''
+    if (!DATA.hasVerLogin) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', '/login', false)
+        xhr.send()
+        const resData = JSON.parse(xhr.responseText)
+        let code = resData.code
+        if (code == 200) {
+            DATA.hasLogin = true
+            if (target == 'login') location.hash = ''
+        } else location.hash = '#/login'
+        DATA.hasVerLogin = true
+    } else {
+        if (!DATA.hasLogin) location.hash = '#/login'
+    }
+}
 
 /** 配置路由 */
 function router() {
@@ -29,6 +56,8 @@ function router() {
     poncon.setPage('login', () => {
 
     })
+
+    window.addEventListener('hashchange', verLogin)
     poncon.start()
     autoMenuStats(poncon)
 }
