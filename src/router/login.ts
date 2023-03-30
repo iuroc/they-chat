@@ -5,7 +5,7 @@ import { DB_CONFIG } from '../config'
 import { initDatabase } from '../db'
 import { ApiRequest, printErr, printSuc } from '../util'
 
-/** 登录校验 */
+/** 中间件，登录校验 */
 export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
     await initDatabase(req, res, () => null)
     await verCookie(req, res)

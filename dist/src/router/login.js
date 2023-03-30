@@ -43,7 +43,7 @@ var express_validator_1 = require("express-validator");
 var config_1 = require("../config");
 var db_1 = require("../db");
 var util_1 = require("../util");
-/** 登录校验 */
+/** 中间件，登录校验 */
 var verLogin = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var errors, loginName, password, sql;
     var _a;
