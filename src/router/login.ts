@@ -1,5 +1,5 @@
 import * as cookieParser from 'cookie-parser'
-import { Router, RequestHandler } from 'express'
+import { Router, RequestHandler, Request, Response } from 'express'
 import { validationResult, cookie } from 'express-validator'
 import { DB_CONFIG } from '../config'
 import { initDatabase } from '../db'
@@ -8,17 +8,7 @@ import { ApiRequest, printErr, printSuc } from '../util'
 /** 登录校验 */
 export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
     await initDatabase(req, res, () => null)
-    cookieParser()(req, res, () => null)
-    await new Promise(resolve => {
-        cookie('loginName')
-            .custom((input: string) => input.match(/^\w{4,20}$/))
-            .withMessage('用户名长度为4-20个字符')(req, res, () => resolve(null))
-    })
-    await new Promise(resolve => {
-        cookie('password')
-            .custom((input: string) => input.match(/^\w{4,20}$/))
-            .withMessage('密码长度为4-20个字符')(req, res, () => resolve(null))
-    })
+    await verCookie(req, res)
     // 校验 Cookie 格式
     const errors = validationResult(req)
     if (!errors.isEmpty()) return printErr(res, errors.array()[0].msg)
@@ -37,7 +27,23 @@ export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
     })
 }
 
+/** 登录校验 */
 export default Router().get('/login', verLogin, (req: ApiRequest, res) => {
     if (req.hasLogin) return printSuc(res, null, '登录成功')
     return printErr(res, '登录失败')
 })
+
+/** 校验 Cookie */
+async function verCookie(req: Request, res: Response) {
+    cookieParser()(req, res, () => null)
+    await new Promise(resolve => {
+        cookie('loginName')
+            .custom((input: string) => input.match(/^\w{4,20}$/))
+            .withMessage('用户名长度为4-20个字符')(req, res, () => resolve(null))
+    })
+    await new Promise(resolve => {
+        cookie('password')
+            .custom((input: string) => input.match(/^\w{4,20}$/))
+            .withMessage('密码长度为4-20个字符')(req, res, () => resolve(null))
+    })
+}
