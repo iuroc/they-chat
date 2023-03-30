@@ -1,19 +1,43 @@
-import { Router } from 'express'
 import * as cookieParser from 'cookie-parser'
-import { cookie, validationResult } from 'express-validator'
-import { initDatabaseAndLogin, CustomRequest } from '../db'
-export default Router().get('/login',
-    cookieParser(),
-    cookie('loginName').custom((input: string) => input.match(/\w{4,20}/)).withMessage('用户名长度为4-20个字符'),
-    cookie('password').custom((input: string) => input.match(/\w{4,20}/)).withMessage('密码长度为4-20个字符'),
-    initDatabaseAndLogin,
-    async (req: CustomRequest, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) return res.json({ errors: errors.array() })
-        const conn = req.conn
-        res.json({
-            code: 200,
-            msg: '登录成功',
-            data: null
-        })
+import { Router, RequestHandler } from 'express'
+import { validationResult, cookie } from 'express-validator'
+import { DB_CONFIG } from '../config'
+import { initDatabase } from '../db'
+import { ApiRequest, printErr, printSuc } from '../util'
+
+/** 登录校验 */
+export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
+    await initDatabase(req, res, () => null)
+    cookieParser()(req, res, () => null)
+    await new Promise(resolve => {
+        cookie('loginName')
+            .custom((input: string) => input.match(/^\w{4,20}$/))
+            .withMessage('用户名长度为4-20个字符')(req, res, () => resolve(null))
     })
+    await new Promise(resolve => {
+        cookie('password')
+            .custom((input: string) => input.match(/^\w{4,20}$/))
+            .withMessage('密码长度为4-20个字符')(req, res, () => resolve(null))
+    })
+    // 校验 Cookie 格式
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) return printErr(res, errors.array()[0].msg)
+    // 获取 Cookie 字段值
+    let loginName = req.cookies.loginName
+    let password = req.cookies.password
+    // 查询语句
+    let sql = `SELECT COUNT(*) FROM \`${DB_CONFIG.table.user}\` WHERE
+    (\`user_name\` = '${loginName}' OR \`email\` = '${loginName}') AND \`password_md5\` = '${password}'`
+    // 执行查询
+    req.conn?.query(sql, (err, result: any) => {
+        if (err) return printErr(res, err.message)
+        if (result[0]['COUNT(*)'] == 0) return printErr(res, '登录失败')
+        req.hasLogin = true
+        next()
+    })
+}
+
+export default Router().get('/login', verLogin, (req: ApiRequest, res) => {
+    if (req.hasLogin) return printSuc(res, null, '登录成功')
+    return printErr(res, '登录失败')
+})

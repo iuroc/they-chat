@@ -36,63 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verLogin = void 0;
-var cookieParser = require("cookie-parser");
 var express_1 = require("express");
+var cookieParser = require("cookie-parser");
 var express_validator_1 = require("express-validator");
-var config_1 = require("../config");
 var db_1 = require("../db");
 var util_1 = require("../util");
-/** 登录校验 */
-var verLogin = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var errors, loginName, password, sql;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0: return [4 /*yield*/, (0, db_1.initDatabase)(req, res, function () { return null; })];
-            case 1:
-                _b.sent();
-                cookieParser()(req, res, function () { return null; });
-                return [4 /*yield*/, new Promise(function (resolve) {
-                        (0, express_validator_1.cookie)('loginName')
-                            .custom(function (input) { return input.match(/^\w{4,20}$/); })
-                            .withMessage('用户名长度为4-20个字符')(req, res, function () { return resolve(null); });
-                    })];
-            case 2:
-                _b.sent();
-                return [4 /*yield*/, new Promise(function (resolve) {
-                        (0, express_validator_1.cookie)('password')
-                            .custom(function (input) { return input.match(/^\w{4,20}$/); })
-                            .withMessage('密码长度为4-20个字符')(req, res, function () { return resolve(null); });
-                    })
-                    // 校验 Cookie 格式
-                ];
-            case 3:
-                _b.sent();
+exports.default = (0, express_1.Router)().get('/login', cookieParser(), (0, express_validator_1.cookie)('loginName').custom(function (input) { return input.match(/^\w{4,20}$/); }).withMessage('用户名长度为4-20个字符'), (0, express_validator_1.cookie)('password').custom(function (input) { return input.match(/^\w{4,20}$/); }).withMessage('密码长度为4-20个字符'), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var errors, conn;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
                 errors = (0, express_validator_1.validationResult)(req);
                 if (!errors.isEmpty())
-                    return [2 /*return*/, (0, util_1.printErr)(res, errors.array()[0].msg)
-                        // 获取 Cookie 字段值
-                    ];
-                loginName = req.cookies.loginName;
-                password = req.cookies.password;
-                sql = "SELECT COUNT(*) FROM `".concat(config_1.DB_CONFIG.table.user, "` WHERE\n    (`user_name` = '").concat(loginName, "' OR `email` = '").concat(loginName, "') AND `password_md5` = '").concat(password, "'");
-                // 执行查询
-                (_a = req.conn) === null || _a === void 0 ? void 0 : _a.query(sql, function (err, result) {
-                    if (err)
-                        return (0, util_1.printErr)(res, err.message);
-                    if (result[0]['COUNT(*)'] == 0)
-                        return (0, util_1.printErr)(res, '登录失败');
-                    req.hasLogin = true;
-                    next();
-                });
+                    return [2 /*return*/, (0, util_1.printErr)(res, errors.array()[0].msg)];
+                return [4 /*yield*/, (0, db_1.getConn)()];
+            case 1:
+                conn = _a.sent();
+                (0, db_1.login)(req, res, conn);
                 return [2 /*return*/];
         }
     });
-}); };
-exports.verLogin = verLogin;
-exports.default = (0, express_1.Router)().get('/login', exports.verLogin, function (req, res) {
-    if (req.hasLogin)
-        return (0, util_1.printSuc)(res, null, '登录成功');
-    return (0, util_1.printErr)(res, '登录失败');
-});
+}); });

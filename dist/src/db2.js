@@ -36,60 +36,55 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initDatabase = void 0;
+exports.login = exports.initDatabase = exports.getConn = void 0;
 var mysql2_1 = require("mysql2");
-var config_1 = require("./config");
 var util_1 = require("./util");
-/**
- * 初始化数据库
- * @param req 请求对象
- * @param res 响应对象
- * @param next 下一个函数
- */
-var initDatabase = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var conn;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                conn = (0, mysql2_1.createPool)({
-                    host: config_1.DB_CONFIG.host,
-                    user: config_1.DB_CONFIG.user,
-                    password: config_1.DB_CONFIG.password
-                });
-                req.conn = conn;
-                return [4 /*yield*/, new Promise(function (resolve) {
-                        conn.query("CREATE DATABASE IF NOT EXISTS `".concat(config_1.DB_CONFIG.database, "`"), function (err, result) {
-                            conn.query("USE `".concat(config_1.DB_CONFIG.database, "`"), function (err) {
-                                if (err)
-                                    (0, util_1.printErr)(res, err.message);
-                                resolve(err);
-                            });
-                        });
-                    })];
-            case 1:
-                _a.sent();
-                return [4 /*yield*/, initTables(res, conn)];
-            case 2:
-                _a.sent();
-                next();
-                return [2 /*return*/];
-        }
+var config_1 = require("./config");
+/** 获取数据库连接并初始化 */
+function getConn() {
+    var _this = this;
+    var conn = (0, mysql2_1.createPool)({
+        host: config_1.DB_CONFIG.host,
+        user: config_1.DB_CONFIG.user,
+        password: config_1.DB_CONFIG.password
     });
-}); };
+    return new Promise(function (resolve) {
+        conn.query("CREATE DATABASE IF NOT EXISTS ".concat(config_1.DB_CONFIG.database), function (err) {
+            conn.query("USE ".concat(config_1.DB_CONFIG.database), function (err) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    if (err)
+                        // 初始化数据表
+                        initTable(conn);
+                    resolve(conn);
+                    return [2 /*return*/];
+                });
+            }); });
+        });
+    });
+}
+exports.getConn = getConn;
+/** 中间件，初始化数据库 */
+function initDatabase(req, res, next) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            getConn().then(function (value) {
+                req.conn = value;
+                next();
+            });
+            return [2 /*return*/];
+        });
+    });
+}
 exports.initDatabase = initDatabase;
-/**
- * 初始化数据表
- * @param res 响应对象
- * @param conn 数据库连接
- */
-function initTables(res, conn) {
+/** 初始化数据表 */
+function initTable(conn) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, new Promise(function (resolve) {
                         conn.query("CREATE TABLE IF NOT EXISTS `".concat(config_1.DB_CONFIG.table.user, "` (\n            `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '\u7528\u6237ID\uFF0C\u53EA\u7528\u4E8E\u7D22\u5F15',\n            `nick_name` VARCHAR(255) UNIQUE COMMENT '\u7528\u6237\u6635\u79F0',\n            `user_name` VARCHAR(255) UNIQUE COMMENT '\u7528\u6237\u540D\uFF0C\u53EF\u7528\u4E8E\u767B\u5F55',\n            `email` VARCHAR(255) UNIQUE COMMENT '\u90AE\u7BB1\uFF0C\u53EF\u7528\u4E8E\u767B\u5F55',\n            `password_md5` VARCHAR(255) COMMENT '\u5BC6\u7801\u7684md5\u5BC6\u6587',\n            `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '\u6CE8\u518C\u65F6\u95F4'\n        )"), function (err) {
                             if (err)
-                                (0, util_1.printErr)(res, err.message);
+                                console.log(err);
                             resolve(err);
                         });
                     })];
@@ -98,7 +93,7 @@ function initTables(res, conn) {
                     return [4 /*yield*/, new Promise(function (resolve) {
                             conn.query("CREATE TABLE IF NOT EXISTS `".concat(config_1.DB_CONFIG.table.msg, "` (\n            `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '\u6D88\u606FID\uFF0C\u53EA\u7528\u4E8E\u7D22\u5F15',\n            `from_user` INT COMMENT '\u53D1\u9001\u4EBAID',\n            `to_room` INT COMMENT '\u76EE\u6807\u623F\u95F4ID',\n            `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '\u53D1\u9001\u65F6\u95F4'\n        )"), function (err) {
                                 if (err)
-                                    (0, util_1.printErr)(res, err.message);
+                                    console.log(err);
                                 resolve(err);
                             });
                         })];
@@ -107,7 +102,7 @@ function initTables(res, conn) {
                     return [4 /*yield*/, new Promise(function (resolve) {
                             conn.query("CREATE TABLE IF NOT EXISTS `".concat(config_1.DB_CONFIG.table.room, "` (\n            `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '\u623F\u95F4ID\uFF0C\u53EA\u7528\u4E8E\u7D22\u5F15',\n            `limit_num` INT COMMENT '\u623F\u95F4\u9650\u5236\u4EBA\u6570',\n            `has_num` INT COMMENT '\u623F\u95F4\u5DF2\u6709\u4EBA\u6570',\n            `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '\u623F\u95F4\u521B\u5EFA\u65F6\u95F4'\n        )"), function (err) {
                                 if (err)
-                                    (0, util_1.printErr)(res, err.message);
+                                    console.log(err);
                                 resolve(err);
                             });
                         })];
@@ -118,3 +113,23 @@ function initTables(res, conn) {
         });
     });
 }
+/**
+ * 校验登录
+ * @param req 请求对象
+ * @param res 相应对象
+ * @param conn 数据库连接
+ * @returns
+ */
+function login(req, res, conn) {
+    var loginName = req.cookies.loginName;
+    var password = req.cookies.password;
+    var sql = "SELECT COUNT(*) FROM `".concat(config_1.DB_CONFIG.table.user, "` WHERE\n    (`user_name` = '").concat(loginName, " OR `email` = '").concat(loginName, "') AND `password_md5` = '").concat(password, "'");
+    conn.query(sql, function (err, rows) {
+        if (err)
+            return (0, util_1.printErr)(res, err.message);
+        if (!rows)
+            return (0, util_1.printErr)(res, '登录失败');
+        return (0, util_1.printSuc)(res, null, '成功');
+    });
+}
+exports.login = login;
