@@ -80,6 +80,7 @@ var verLogin = function (req, res, next) { return __awaiter(void 0, void 0, void
 exports.verLogin = verLogin;
 /** 登录校验 */
 exports.default = (0, express_1.Router)().get('/login', exports.verLogin, function (req, res) {
+    (0, util_1.printSuc)(res, null, '成功');
 });
 /** 校验 Cookie */
 function verCookie(req, res) {

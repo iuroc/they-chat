@@ -3,7 +3,7 @@ import { Router, RequestHandler, Request, Response } from 'express'
 import { validationResult, cookie } from 'express-validator'
 import { DB_CONFIG } from '../config'
 import { initDatabase } from '../db'
-import { ApiRequest, printErr } from '../util'
+import { ApiRequest, printErr, printSuc } from '../util'
 
 /** 登录校验 */
 export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
@@ -28,7 +28,7 @@ export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
 
 /** 登录校验 */
 export default Router().get('/login', verLogin, (req: ApiRequest, res) => {
-
+    printSuc(res, null, '成功')
 })
 
 /** 校验 Cookie */
