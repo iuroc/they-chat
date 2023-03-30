@@ -25,9 +25,7 @@ export function printErr(res: Response, message: string) {
 /** API 请求 */
 export interface ApiRequest extends Request {
     /** 数据库连接 */
-    conn?: Pool,
-    /** 是否通过登录校验 */
-    hasLogin?: boolean
+    conn?: Pool
 }
 
 /** API 响应 */

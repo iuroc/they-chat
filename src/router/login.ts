@@ -3,7 +3,7 @@ import { Router, RequestHandler, Request, Response } from 'express'
 import { validationResult, cookie } from 'express-validator'
 import { DB_CONFIG } from '../config'
 import { initDatabase } from '../db'
-import { ApiRequest, printErr, printSuc } from '../util'
+import { ApiRequest, printErr } from '../util'
 
 /** 登录校验 */
 export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
@@ -22,15 +22,13 @@ export const verLogin: RequestHandler = async (req: ApiRequest, res, next) => {
     req.conn?.query(sql, (err, result: any) => {
         if (err) return printErr(res, err.message)
         if (result[0]['COUNT(*)'] == 0) return printErr(res, '登录失败')
-        req.hasLogin = true
         next()
     })
 }
 
 /** 登录校验 */
 export default Router().get('/login', verLogin, (req: ApiRequest, res) => {
-    if (req.hasLogin) return printSuc(res, null, '登录成功')
-    return printErr(res, '登录失败')
+
 })
 
 /** 校验 Cookie */

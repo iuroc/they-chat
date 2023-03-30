@@ -71,7 +71,6 @@ var verLogin = function (req, res, next) { return __awaiter(void 0, void 0, void
                         return (0, util_1.printErr)(res, err.message);
                     if (result[0]['COUNT(*)'] == 0)
                         return (0, util_1.printErr)(res, '登录失败');
-                    req.hasLogin = true;
                     next();
                 });
                 return [2 /*return*/];
@@ -81,9 +80,6 @@ var verLogin = function (req, res, next) { return __awaiter(void 0, void 0, void
 exports.verLogin = verLogin;
 /** 登录校验 */
 exports.default = (0, express_1.Router)().get('/login', exports.verLogin, function (req, res) {
-    if (req.hasLogin)
-        return (0, util_1.printSuc)(res, null, '登录成功');
-    return (0, util_1.printErr)(res, '登录失败');
 });
 /** 校验 Cookie */
 function verCookie(req, res) {
