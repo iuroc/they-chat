@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ponconjs_1 = require("ponconjs");
+var md5 = require("md5");
 var DATA = {
     /** 是否联网校验过 */
     hasVerLogin: false,
@@ -12,16 +13,20 @@ router();
 setResizeDiv();
 addClickEvent();
 document.ondragstart = function () { return false; };
+function getLoginRes() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/login', false);
+    xhr.send();
+    var resData = JSON.parse(xhr.responseText);
+    return resData;
+}
 /** 判断登录状态 */
 function verLogin() {
     var target = location.hash.split('/')[1];
     if (target == 'login' && DATA.hasLogin)
         return location.hash = '';
     if (!DATA.hasVerLogin) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/login', false);
-        xhr.send();
-        var resData = JSON.parse(xhr.responseText);
+        var resData = getLoginRes();
         var code = resData.code;
         if (code == 200) {
             DATA.hasLogin = true;
@@ -133,5 +138,34 @@ function addClickEvent() {
     registerMsg.addEventListener('click', function () {
         loginBoxEle.style.display = 'none';
         registerBoxEle.style.display = 'block';
+    });
+    // 设置退出登录
+    var logoutBtn = document.querySelector('.poncon-user .logout');
+    logoutBtn.addEventListener('click', function () {
+        document.cookie = 'loginName=';
+        document.cookie = 'password=';
+        location.reload();
+    });
+    // 设置登录事件
+    var loginPageEle = document.querySelector('.poncon-login');
+    var loginBtn = loginPageEle.querySelector('.login-btn');
+    var loginNameEleOfLogin = loginPageEle.querySelector('.input-username');
+    var passwordEleOfLogin = loginPageEle.querySelector('.input-password');
+    loginBtn.addEventListener('click', function () {
+        var loginName = loginNameEleOfLogin.value;
+        var password = passwordEleOfLogin.value;
+        var passwordMd5 = md5(password);
+        document.cookie = 'loginName=' + loginName;
+        document.cookie = 'password=' + passwordMd5;
+        // location.reload()
+        var resData = getLoginRes();
+        var code = resData.code;
+        if (code == 200) {
+            location.hash = '';
+            DATA.hasVerLogin = true;
+            DATA.hasLogin = true;
+            return;
+        }
+        alert(resData.msg);
     });
 }

@@ -1,4 +1,5 @@
 import Poncon from 'ponconjs'
+import * as md5 from 'md5'
 
 const DATA = {
     /** 是否联网校验过 */
@@ -12,15 +13,20 @@ setResizeDiv()
 addClickEvent()
 document.ondragstart = () => false
 
+
+function getLoginRes() {
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', '/login', false)
+    xhr.send()
+    const resData = JSON.parse(xhr.responseText)
+    return resData
+}
 /** 判断登录状态 */
 function verLogin() {
     const target = location.hash.split('/')[1]
     if (target == 'login' && DATA.hasLogin) return location.hash = ''
     if (!DATA.hasVerLogin) {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', '/login', false)
-        xhr.send()
-        const resData = JSON.parse(xhr.responseText)
+        const resData = getLoginRes()
         let code = resData.code
         if (code == 200) {
             DATA.hasLogin = true
@@ -135,5 +141,34 @@ function addClickEvent() {
     registerMsg.addEventListener('click', () => {
         loginBoxEle.style.display = 'none'
         registerBoxEle.style.display = 'block'
+    })
+    // 设置退出登录
+    const logoutBtn = document.querySelector('.poncon-user .logout') as HTMLDivElement
+    logoutBtn.addEventListener('click', () => {
+        document.cookie = 'loginName='
+        document.cookie = 'password='
+        location.reload()
+    })
+    // 设置登录事件
+    const loginPageEle = document.querySelector('.poncon-login') as HTMLDivElement
+    const loginBtn = loginPageEle.querySelector('.login-btn') as HTMLDivElement
+    const loginNameEleOfLogin = loginPageEle.querySelector('.input-username') as HTMLInputElement
+    const passwordEleOfLogin = loginPageEle.querySelector('.input-password') as HTMLInputElement
+    loginBtn.addEventListener('click', () => {
+        let loginName = loginNameEleOfLogin.value
+        let password = passwordEleOfLogin.value
+        let passwordMd5 = md5(password)
+        document.cookie = 'loginName=' + loginName
+        document.cookie = 'password=' + passwordMd5
+        // location.reload()
+        const resData = getLoginRes()
+        let code = resData.code
+        if (code == 200) {
+            location.hash = ''
+            DATA.hasVerLogin = true
+            DATA.hasLogin = true
+            return
+        }
+        alert(resData.msg)
     })
 }

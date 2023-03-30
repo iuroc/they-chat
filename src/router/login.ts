@@ -41,7 +41,7 @@ async function verCookie(req: Request, res: Response) {
     })
     await new Promise(resolve => {
         cookie('password')
-            .custom((input: string) => input.match(/^\w{4,20}$/))
-            .withMessage('密码长度为4-20个字符')(req, res, () => resolve(null))
+            .custom((input: string) => input.match(/^\w{32}$/))
+            .withMessage('密码长度为32个字符')(req, res, () => resolve(null))
     })
 }

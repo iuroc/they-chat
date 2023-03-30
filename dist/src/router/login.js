@@ -98,8 +98,8 @@ function verCookie(req, res) {
                     _a.sent();
                     return [4 /*yield*/, new Promise(function (resolve) {
                             (0, express_validator_1.cookie)('password')
-                                .custom(function (input) { return input.match(/^\w{4,20}$/); })
-                                .withMessage('密码长度为4-20个字符')(req, res, function () { return resolve(null); });
+                                .custom(function (input) { return input.match(/^\w{32}$/); })
+                                .withMessage('密码长度为32个字符')(req, res, function () { return resolve(null); });
                         })];
                 case 2:
                     _a.sent();
