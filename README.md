@@ -20,6 +20,6 @@ docker rm they-chat
 docker rmi they-chat-image
 git clone https://github.com/oyps/they-chat
 docker build -t they-chat-image they-chat
-docker run --name they-chat -p 3004:3000 -e MYSQL_HOST=localhost -d they-chat-image
+docker run --name they-chat -p 3004:3000 -e MYSQL_HOST=172.17.0.6 -d they-chat-image
 rm -rf they-chat
 ```
