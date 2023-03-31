@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DB_CONFIG = void 0;
-console.log(process.env);
 /** 数据库配置信息 */
 exports.DB_CONFIG = {
     /** 数据库主机名 */
