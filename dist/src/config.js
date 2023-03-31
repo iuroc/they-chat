@@ -1,16 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DB_CONFIG = void 0;
+console.log(process.env);
 /** 数据库配置信息 */
 exports.DB_CONFIG = {
     /** 数据库主机名 */
-    host: 'localhost',
+    host: process.env.MYSQL_HOST || 'localhost',
     /** 数据库用户名 */
-    user: 'root',
+    user: process.env.MYSQL_USER || 'root',
     /** 数据库密码 */
-    password: '12345678',
+    password: process.env.MYSQL_PASSWORD || '12345678',
     /** 数据库名称 */
-    database: 'ponconsoft',
+    database: process.env.MYSQL_DATABASE || 'ponconsoft',
     /** 数据表 */
     table: {
         /** 用户表 */
