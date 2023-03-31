@@ -1,3 +1,4 @@
+console.log(process.env)
 
 /** 数据库配置信息 */
 export const DB_CONFIG = {
