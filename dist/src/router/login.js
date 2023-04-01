@@ -147,7 +147,23 @@ function verCookie(req, res) {
 function verBody(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, new Promise(function (resolve) {
+                        (0, express_validator_1.body)('loginName')
+                            .custom(function (input) { return input.match(/^\w{4,20}$/); })
+                            .withMessage('用户名长度为4-20个字符')(req, res, function () { return resolve(null); });
+                    })];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, new Promise(function (resolve) {
+                            (0, express_validator_1.body)('password')
+                                .custom(function (input) { return input.match(/^\w{32}$/); })
+                                .withMessage('密码长度为32个字符')(req, res, function () { return resolve(null); });
+                        })];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }

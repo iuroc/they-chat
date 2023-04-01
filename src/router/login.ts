@@ -1,10 +1,9 @@
 import cookieParser = require('cookie-parser')
-import { decode } from 'querystring'
 import { Router, RequestHandler, Request, Response } from 'express'
-import { validationResult, cookie } from 'express-validator'
+import { validationResult, cookie, body } from 'express-validator'
 import { DB_CONFIG } from '../config'
 import { initDatabase } from '../db'
-import { ApiRequest, ApiResponse, printErr, printSuc } from '../util'
+import { ApiRequest, printErr, printSuc } from '../util'
 import { NextFunction } from 'express-serve-static-core'
 
 /** 中间件，登录校验 */
@@ -78,15 +77,14 @@ async function verCookie(req: Request, res: Response) {
 
 
 async function verBody(req: Request, res: Response) {
-    // cookieParser()(req, res, () => null)
-    // await new Promise(resolve => {
-    //     cookie('loginName')
-    //         .custom((input: string) => input.match(/^\w{4,20}$/))
-    //         .withMessage('用户名长度为4-20个字符')(req, res, () => resolve(null))
-    // })
-    // await new Promise(resolve => {
-    //     cookie('password')
-    //         .custom((input: string) => input.match(/^\w{32}$/))
-    //         .withMessage('密码长度为32个字符')(req, res, () => resolve(null))
-    // })
+    await new Promise(resolve => {
+        body('loginName')
+            .custom((input: string) => input.match(/^\w{4,20}$/))
+            .withMessage('用户名长度为4-20个字符')(req, res, () => resolve(null))
+    })
+    await new Promise(resolve => {
+        body('password')
+            .custom((input: string) => input.match(/^\w{32}$/))
+            .withMessage('密码长度为32个字符')(req, res, () => resolve(null))
+    })
 }
