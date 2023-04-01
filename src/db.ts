@@ -12,8 +12,10 @@ import { ApiRequest, ApiResponse, printErr } from './util'
 export const initDatabase = async (req: ApiRequest, res: Response, next: NextFunction) => {
     const conn = createPool({
         host: DB_CONFIG.host,
+        port: DB_CONFIG.port,
         user: DB_CONFIG.user,
-        password: DB_CONFIG.password
+        password: DB_CONFIG.password,
+        charset: 'utf-8',
     })
     req.conn = conn
     await new Promise(resolve => {
