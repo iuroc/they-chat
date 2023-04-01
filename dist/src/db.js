@@ -41,7 +41,7 @@ var mysql2_1 = require("mysql2");
 var config_1 = require("./config");
 var util_1 = require("./util");
 /**
- * 初始化数据库
+ * 中间件，初始化数据库
  * @param req 请求对象
  * @param res 响应对象
  * @param next 下一个函数
@@ -53,6 +53,7 @@ var initDatabase = function (req, res, next) { return __awaiter(void 0, void 0, 
             case 0:
                 conn = (0, mysql2_1.createPool)({
                     host: config_1.DB_CONFIG.host,
+                    port: config_1.DB_CONFIG.port,
                     user: config_1.DB_CONFIG.user,
                     password: config_1.DB_CONFIG.password
                 });

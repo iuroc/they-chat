@@ -1,8 +1,188 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+// If obj.hasOwnProperty has been overridden, then calling
+// obj.hasOwnProperty(prop) will break.
+// See: https://github.com/joyent/node/issues/1707
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+module.exports = function(qs, sep, eq, options) {
+  sep = sep || '&';
+  eq = eq || '=';
+  var obj = {};
+
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
+  }
+
+  var regexp = /\+/g;
+  qs = qs.split(sep);
+
+  var maxKeys = 1000;
+  if (options && typeof options.maxKeys === 'number') {
+    maxKeys = options.maxKeys;
+  }
+
+  var len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
+  }
+
+  for (var i = 0; i < len; ++i) {
+    var x = qs[i].replace(regexp, '%20'),
+        idx = x.indexOf(eq),
+        kstr, vstr, k, v;
+
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
+    } else {
+      kstr = x;
+      vstr = '';
+    }
+
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
+
+    if (!hasOwnProperty(obj, k)) {
+      obj[k] = v;
+    } else if (isArray(obj[k])) {
+      obj[k].push(v);
+    } else {
+      obj[k] = [obj[k], v];
+    }
+  }
+
+  return obj;
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+},{}],2:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+var stringifyPrimitive = function(v) {
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
+};
+
+module.exports = function(obj, sep, eq, name) {
+  sep = sep || '&';
+  eq = eq || '=';
+  if (obj === null) {
+    obj = undefined;
+  }
+
+  if (typeof obj === 'object') {
+    return map(objectKeys(obj), function(k) {
+      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+      if (isArray(obj[k])) {
+        return map(obj[k], function(v) {
+          return ks + encodeURIComponent(stringifyPrimitive(v));
+        }).join(sep);
+      } else {
+        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+      }
+    }).join(sep);
+
+  }
+
+  if (!name) return '';
+  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+         encodeURIComponent(stringifyPrimitive(obj));
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+function map (xs, f) {
+  if (xs.map) return xs.map(f);
+  var res = [];
+  for (var i = 0; i < xs.length; i++) {
+    res.push(f(xs[i], i));
+  }
+  return res;
+}
+
+var objectKeys = Object.keys || function (obj) {
+  var res = [];
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
+  }
+  return res;
+};
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
+exports.decode = exports.parse = require('./decode');
+exports.encode = exports.stringify = require('./encode');
+
+},{"./decode":1,"./encode":2}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ponconjs_1 = require("ponconjs");
 var md5 = require("md5");
+var querystring_1 = require("querystring");
 var DATA = {
     /** 是否联网校验过 */
     hasVerLogin: false,
@@ -14,10 +194,21 @@ router();
 setResizeDiv();
 addClickEvent();
 document.ondragstart = function () { return false; };
-function getLoginRes() {
+function getLoginRes(loginName, passwordMd5) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/login', false);
-    xhr.send();
+    // 判断是否为登录界面手动登录
+    if (loginName && passwordMd5) {
+        xhr.open('POST', '/login', false);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send((0, querystring_1.encode)({
+            loginName: loginName,
+            password: passwordMd5
+        }));
+    }
+    else {
+        xhr.open('GET', '/login', false);
+        xhr.send();
+    }
     var resData = JSON.parse(xhr.responseText);
     return resData;
 }
@@ -124,54 +315,81 @@ function setResizeDiv() {
 }
 /** 为初始载入的元素添加单击事件 */
 function addClickEvent() {
-    /** 提示：已有账号？点击登录 */
-    var loginMsg = document.querySelector('.poncon-login .login-msg');
-    /** 提示：没有账号？点击注册 */
-    var registerMsg = document.querySelector('.poncon-login .register-msg');
-    /** 登录盒子 */
-    var loginBoxEle = document.querySelector('.poncon-login .box.login');
-    /** 注册盒子 */
-    var registerBoxEle = document.querySelector('.poncon-login .box.register');
-    loginMsg.addEventListener('click', function () {
-        loginBoxEle.style.display = 'block';
-        registerBoxEle.style.display = 'none';
-    });
-    registerMsg.addEventListener('click', function () {
-        loginBoxEle.style.display = 'none';
-        registerBoxEle.style.display = 'block';
-    });
-    // 设置退出登录
-    var logoutBtn = document.querySelector('.poncon-user .logout');
-    logoutBtn.addEventListener('click', function () {
-        document.cookie = 'loginName=';
-        document.cookie = 'password=';
-        location.reload();
-    });
-    // 设置登录事件
-    var loginPageEle = document.querySelector('.poncon-login');
-    var loginBtn = loginPageEle.querySelector('.login-btn');
-    var loginNameEleOfLogin = loginPageEle.querySelector('.input-username');
-    var passwordEleOfLogin = loginPageEle.querySelector('.input-password');
-    loginBtn.addEventListener('click', function () {
-        var loginName = loginNameEleOfLogin.value;
-        var password = passwordEleOfLogin.value;
-        var passwordMd5 = md5(password);
-        document.cookie = 'loginName=' + loginName;
-        document.cookie = 'password=' + passwordMd5;
-        // location.reload()
-        var resData = getLoginRes();
-        var code = resData.code;
-        if (code == 200) {
-            location.hash = '';
-            DATA.hasVerLogin = true;
-            DATA.hasLogin = true;
-            return;
-        }
-        alert(resData.msg);
-    });
+    changeLoginRegister();
+    setLogoutEvent();
+    setLoginEvent();
+    /** 设置登录事件 */
+    function setLoginEvent() {
+        var loginPageEle = document.querySelector('.poncon-login');
+        var loginBtn = loginPageEle.querySelector('.login-btn');
+        var loginNameEleOfLogin = loginPageEle.querySelector('.input-username');
+        var passwordEleOfLogin = loginPageEle.querySelector('.input-password');
+        // 回车聚焦到密码输入框
+        loginNameEleOfLogin.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                passwordEleOfLogin.focus();
+        });
+        // 回车点击登录
+        passwordEleOfLogin.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                loginBtn.click();
+        });
+        loginBtn.addEventListener('click', function () {
+            var loginName = loginNameEleOfLogin.value;
+            var password = passwordEleOfLogin.value;
+            if (!loginName.match(/^\w{4,20}$/))
+                return alert('用户名长度为4-20个字符');
+            if (!password.match(/^\w{4,20}$/))
+                return alert('密码长度为4-20个字符');
+            var passwordMd5 = md5(password);
+            var resData = getLoginRes(loginName, passwordMd5);
+            var code = resData.code;
+            if (code == 200) {
+                location.hash = '';
+                DATA.hasVerLogin = true;
+                DATA.hasLogin = true;
+                return;
+            }
+            alert(resData.msg);
+        });
+    }
+    /** 设置退出登录 */
+    function setLogoutEvent() {
+        var logoutBtn = document.querySelector('.poncon-user .logout');
+        var logoutBtn2 = document.querySelector('.menu-bottom-list .logout');
+        var clickEvent = function () {
+            if (!confirm('确定要退出登录吗？'))
+                return;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/logout', false);
+            xhr.send();
+            location.reload();
+        };
+        logoutBtn.addEventListener('click', clickEvent);
+        logoutBtn2.addEventListener('click', clickEvent);
+    }
+    /** 切换登录和注册页面显示 */
+    function changeLoginRegister() {
+        /** 提示：已有账号？点击登录 */
+        var loginMsg = document.querySelector('.poncon-login .login-msg');
+        /** 提示：没有账号？点击注册 */
+        var registerMsg = document.querySelector('.poncon-login .register-msg');
+        /** 登录盒子 */
+        var loginBoxEle = document.querySelector('.poncon-login .box.login');
+        /** 注册盒子 */
+        var registerBoxEle = document.querySelector('.poncon-login .box.register');
+        loginMsg.addEventListener('click', function () {
+            loginBoxEle.style.display = 'block';
+            registerBoxEle.style.display = 'none';
+        });
+        registerMsg.addEventListener('click', function () {
+            loginBoxEle.style.display = 'none';
+            registerBoxEle.style.display = 'block';
+        });
+    }
 }
 
-},{"md5":5,"ponconjs":6}],2:[function(require,module,exports){
+},{"md5":8,"ponconjs":9,"querystring":3}],5:[function(require,module,exports){
 var charenc = {
   // UTF-8 encoding
   utf8: {
@@ -206,7 +424,7 @@ var charenc = {
 
 module.exports = charenc;
 
-},{}],3:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function() {
   var base64map
       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
@@ -304,7 +522,7 @@ module.exports = charenc;
   module.exports = crypt;
 })();
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -327,7 +545,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function(){
   var crypt = require('crypt'),
       utf8 = require('charenc').utf8,
@@ -489,7 +707,7 @@ function isSlowBuffer (obj) {
 
 })();
 
-},{"charenc":2,"crypt":3,"is-buffer":4}],6:[function(require,module,exports){
+},{"charenc":5,"crypt":6,"is-buffer":7}],9:[function(require,module,exports){
 "use strict";
 exports.__esModule = true;
 /**
@@ -603,4 +821,4 @@ var Poncon = /** @class */ (function () {
 }());
 exports["default"] = Poncon;
 
-},{}]},{},[1]);
+},{}]},{},[4]);

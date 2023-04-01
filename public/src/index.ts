@@ -1,5 +1,6 @@
 import Poncon from 'ponconjs'
 import * as md5 from 'md5'
+import { encode } from 'querystring'
 
 const DATA = {
     /** 是否联网校验过 */
@@ -14,10 +15,20 @@ addClickEvent()
 document.ondragstart = () => false
 
 
-function getLoginRes() {
+function getLoginRes(loginName?: string, passwordMd5?: string) {
     const xhr = new XMLHttpRequest()
-    xhr.open('GET', '/login', false)
-    xhr.send()
+    // 判断是否为登录界面手动登录
+    if (loginName && passwordMd5) {
+        xhr.open('POST', '/login', false)
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+        xhr.send(encode({
+            loginName: loginName,
+            password: passwordMd5
+        }))
+    } else {
+        xhr.open('GET', '/login', false)
+        xhr.send()
+    }
     const resData = JSON.parse(xhr.responseText)
     return resData
 }
@@ -126,49 +137,72 @@ function setResizeDiv() {
 
 /** 为初始载入的元素添加单击事件 */
 function addClickEvent() {
-    /** 提示：已有账号？点击登录 */
-    const loginMsg = document.querySelector('.poncon-login .login-msg') as HTMLDivElement
-    /** 提示：没有账号？点击注册 */
-    const registerMsg = document.querySelector('.poncon-login .register-msg') as HTMLDivElement
-    /** 登录盒子 */
-    const loginBoxEle = document.querySelector('.poncon-login .box.login') as HTMLDivElement
-    /** 注册盒子 */
-    const registerBoxEle = document.querySelector('.poncon-login .box.register') as HTMLDivElement
-    loginMsg.addEventListener('click', () => {
-        loginBoxEle.style.display = 'block'
-        registerBoxEle.style.display = 'none'
-    })
-    registerMsg.addEventListener('click', () => {
-        loginBoxEle.style.display = 'none'
-        registerBoxEle.style.display = 'block'
-    })
-    // 设置退出登录
-    const logoutBtn = document.querySelector('.poncon-user .logout') as HTMLDivElement
-    logoutBtn.addEventListener('click', () => {
-        document.cookie = 'loginName='
-        document.cookie = 'password='
-        location.reload()
-    })
-    // 设置登录事件
-    const loginPageEle = document.querySelector('.poncon-login') as HTMLDivElement
-    const loginBtn = loginPageEle.querySelector('.login-btn') as HTMLDivElement
-    const loginNameEleOfLogin = loginPageEle.querySelector('.input-username') as HTMLInputElement
-    const passwordEleOfLogin = loginPageEle.querySelector('.input-password') as HTMLInputElement
-    loginBtn.addEventListener('click', () => {
-        let loginName = loginNameEleOfLogin.value
-        let password = passwordEleOfLogin.value
-        let passwordMd5 = md5(password)
-        document.cookie = 'loginName=' + loginName
-        document.cookie = 'password=' + passwordMd5
-        // location.reload()
-        const resData = getLoginRes()
-        let code = resData.code
-        if (code == 200) {
-            location.hash = ''
-            DATA.hasVerLogin = true
-            DATA.hasLogin = true
-            return
+    changeLoginRegister()
+    setLogoutEvent()
+    setLoginEvent()
+    /** 设置登录事件 */
+    function setLoginEvent() {
+        const loginPageEle = document.querySelector('.poncon-login') as HTMLDivElement
+        const loginBtn = loginPageEle.querySelector('.login-btn') as HTMLDivElement
+        const loginNameEleOfLogin = loginPageEle.querySelector('.input-username') as HTMLInputElement
+        const passwordEleOfLogin = loginPageEle.querySelector('.input-password') as HTMLInputElement
+        // 回车聚焦到密码输入框
+        loginNameEleOfLogin.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') passwordEleOfLogin.focus()
+        })
+        // 回车点击登录
+        passwordEleOfLogin.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') loginBtn.click()
+        })
+        loginBtn.addEventListener('click', () => {
+            let loginName = loginNameEleOfLogin.value
+            let password = passwordEleOfLogin.value
+            if (!loginName.match(/^\w{4,20}$/)) return alert('用户名长度为4-20个字符')
+            if (!password.match(/^\w{4,20}$/)) return alert('密码长度为4-20个字符')
+            let passwordMd5 = md5(password)
+            const resData = getLoginRes(loginName, passwordMd5)
+            let code = resData.code
+            if (code == 200) {
+                location.hash = ''
+                DATA.hasVerLogin = true
+                DATA.hasLogin = true
+                return
+            }
+            alert(resData.msg)
+        })
+    }
+    /** 设置退出登录 */
+    function setLogoutEvent() {
+        const logoutBtn = document.querySelector('.poncon-user .logout') as HTMLDivElement
+        const logoutBtn2 = document.querySelector('.menu-bottom-list .logout') as HTMLDivElement
+        const clickEvent = () => {
+            if (!confirm('确定要退出登录吗？')) return
+            const xhr = new XMLHttpRequest()
+            xhr.open('GET', '/logout', false)
+            xhr.send()
+            location.reload()
         }
-        alert(resData.msg)
-    })
+        logoutBtn.addEventListener('click', clickEvent)
+        logoutBtn2.addEventListener('click', clickEvent)
+    }
+
+    /** 切换登录和注册页面显示 */
+    function changeLoginRegister() {
+        /** 提示：已有账号？点击登录 */
+        const loginMsg = document.querySelector('.poncon-login .login-msg') as HTMLDivElement
+        /** 提示：没有账号？点击注册 */
+        const registerMsg = document.querySelector('.poncon-login .register-msg') as HTMLDivElement
+        /** 登录盒子 */
+        const loginBoxEle = document.querySelector('.poncon-login .box.login') as HTMLDivElement
+        /** 注册盒子 */
+        const registerBoxEle = document.querySelector('.poncon-login .box.register') as HTMLDivElement
+        loginMsg.addEventListener('click', () => {
+            loginBoxEle.style.display = 'block'
+            registerBoxEle.style.display = 'none'
+        })
+        registerMsg.addEventListener('click', () => {
+            loginBoxEle.style.display = 'none'
+            registerBoxEle.style.display = 'block'
+        })
+    }
 }

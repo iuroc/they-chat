@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verLogin = void 0;
+exports.postLogin = exports.logout = exports.verLogin = void 0;
 var cookieParser = require("cookie-parser");
 var express_1 = require("express");
 var express_validator_1 = require("express-validator");
@@ -45,41 +45,77 @@ var db_1 = require("../db");
 var util_1 = require("../util");
 /** 中间件，登录校验 */
 var verLogin = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, verCookie(req, res)];
+            case 1:
+                _a.sent();
+                run(req, res, next, req.cookies);
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.verLogin = verLogin;
+var postVerLogin = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, verBody(req, res)];
+            case 1:
+                _a.sent();
+                run(req, res, next, req.body);
+                return [2 /*return*/];
+        }
+    });
+}); };
+var run = function (req, res, next, paramData) { return __awaiter(void 0, void 0, void 0, function () {
     var errors, loginName, password, sql;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4 /*yield*/, (0, db_1.initDatabase)(req, res, function () { return null; })];
+            case 0: return [4 /*yield*/, (0, db_1.initDatabase)(req, res, function () { return null; })
+                // 校验 Cookie 格式
+            ];
             case 1:
-                _b.sent();
-                return [4 /*yield*/, verCookie(req, res)
-                    // 校验 Cookie 格式
-                ];
-            case 2:
                 _b.sent();
                 errors = (0, express_validator_1.validationResult)(req);
                 if (!errors.isEmpty())
                     return [2 /*return*/, (0, util_1.printErr)(res, errors.array()[0].msg)
                         // 获取 Cookie 字段值
                     ];
-                loginName = req.cookies.loginName;
-                password = req.cookies.password;
+                loginName = paramData.loginName;
+                password = paramData.password;
                 sql = "SELECT COUNT(*) FROM `".concat(config_1.DB_CONFIG.table.user, "` WHERE\n    (`user_name` = '").concat(loginName, "' OR `email` = '").concat(loginName, "') AND `password_md5` = '").concat(password, "'");
                 // 执行查询
                 (_a = req.conn) === null || _a === void 0 ? void 0 : _a.query(sql, function (err, result) {
                     if (err)
                         return (0, util_1.printErr)(res, err.message);
                     if (result[0]['COUNT(*)'] == 0)
-                        return (0, util_1.printErr)(res, '登录失败');
+                        return (0, util_1.printErr)(res, '用户名或密码错误');
                     next();
                 });
                 return [2 /*return*/];
         }
     });
 }); };
-exports.verLogin = verLogin;
 /** 登录校验 */
 exports.default = (0, express_1.Router)().get('/login', exports.verLogin, function (req, res) {
+    (0, util_1.printSuc)(res, null, '成功');
+});
+/** 退出登录 */
+exports.logout = (0, express_1.Router)().get('/logout', function (req, res) {
+    res.clearCookie('loginName');
+    res.clearCookie('password');
+    (0, util_1.printSuc)(res, null, '退出登录成功');
+});
+/** POST 方式登录校验 */
+exports.postLogin = (0, express_1.Router)().post('/login', postVerLogin, function (req, res) {
+    var sixMonthsInMs = 1000 * 60 * 60 * 24 * 30 * 6;
+    var options = {
+        maxAge: sixMonthsInMs,
+        httpOnly: true,
+    };
+    res.cookie('loginName', req.body.loginName, options);
+    res.cookie('password', req.body.password, options);
     (0, util_1.printSuc)(res, null, '成功');
 });
 /** 校验 Cookie */
@@ -105,6 +141,13 @@ function verCookie(req, res) {
                     _a.sent();
                     return [2 /*return*/];
             }
+        });
+    });
+}
+function verBody(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/];
         });
     });
 }

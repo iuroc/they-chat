@@ -5,6 +5,8 @@ exports.DB_CONFIG = void 0;
 exports.DB_CONFIG = {
     /** 数据库主机名 */
     host: process.env.MYSQL_HOST || 'localhost',
+    /** 数据库端口 */
+    port: parseInt(process.env.MYSQL_PORT || '3306'),
     /** 数据库用户名 */
     user: process.env.MYSQL_USER || 'root',
     /** 数据库密码 */

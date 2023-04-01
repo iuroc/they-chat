@@ -1,10 +1,10 @@
-import { NextFunction, RequestHandler, Response } from 'express'
+import { NextFunction, Response } from 'express'
 import { createPool, Pool } from 'mysql2'
 import { DB_CONFIG } from './config'
 import { ApiRequest, ApiResponse, printErr } from './util'
 
 /**
- * 初始化数据库
+ * 中间件，初始化数据库
  * @param req 请求对象
  * @param res 响应对象
  * @param next 下一个函数
@@ -14,8 +14,7 @@ export const initDatabase = async (req: ApiRequest, res: Response, next: NextFun
         host: DB_CONFIG.host,
         port: DB_CONFIG.port,
         user: DB_CONFIG.user,
-        password: DB_CONFIG.password,
-        charset: 'utf-8',
+        password: DB_CONFIG.password
     })
     req.conn = conn
     await new Promise(resolve => {

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ponconjs_1 = require("ponconjs");
 var md5 = require("md5");
+var querystring_1 = require("querystring");
 var DATA = {
     /** 是否联网校验过 */
     hasVerLogin: false,
@@ -13,10 +14,21 @@ router();
 setResizeDiv();
 addClickEvent();
 document.ondragstart = function () { return false; };
-function getLoginRes() {
+function getLoginRes(loginName, passwordMd5) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/login', false);
-    xhr.send();
+    // 判断是否为登录界面手动登录
+    if (loginName && passwordMd5) {
+        xhr.open('POST', '/login', false);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send((0, querystring_1.encode)({
+            loginName: loginName,
+            password: passwordMd5
+        }));
+    }
+    else {
+        xhr.open('GET', '/login', false);
+        xhr.send();
+    }
     var resData = JSON.parse(xhr.responseText);
     return resData;
 }
@@ -123,49 +135,76 @@ function setResizeDiv() {
 }
 /** 为初始载入的元素添加单击事件 */
 function addClickEvent() {
-    /** 提示：已有账号？点击登录 */
-    var loginMsg = document.querySelector('.poncon-login .login-msg');
-    /** 提示：没有账号？点击注册 */
-    var registerMsg = document.querySelector('.poncon-login .register-msg');
-    /** 登录盒子 */
-    var loginBoxEle = document.querySelector('.poncon-login .box.login');
-    /** 注册盒子 */
-    var registerBoxEle = document.querySelector('.poncon-login .box.register');
-    loginMsg.addEventListener('click', function () {
-        loginBoxEle.style.display = 'block';
-        registerBoxEle.style.display = 'none';
-    });
-    registerMsg.addEventListener('click', function () {
-        loginBoxEle.style.display = 'none';
-        registerBoxEle.style.display = 'block';
-    });
-    // 设置退出登录
-    var logoutBtn = document.querySelector('.poncon-user .logout');
-    logoutBtn.addEventListener('click', function () {
-        document.cookie = 'loginName=';
-        document.cookie = 'password=';
-        location.reload();
-    });
-    // 设置登录事件
-    var loginPageEle = document.querySelector('.poncon-login');
-    var loginBtn = loginPageEle.querySelector('.login-btn');
-    var loginNameEleOfLogin = loginPageEle.querySelector('.input-username');
-    var passwordEleOfLogin = loginPageEle.querySelector('.input-password');
-    loginBtn.addEventListener('click', function () {
-        var loginName = loginNameEleOfLogin.value;
-        var password = passwordEleOfLogin.value;
-        var passwordMd5 = md5(password);
-        document.cookie = 'loginName=' + loginName;
-        document.cookie = 'password=' + passwordMd5;
-        // location.reload()
-        var resData = getLoginRes();
-        var code = resData.code;
-        if (code == 200) {
-            location.hash = '';
-            DATA.hasVerLogin = true;
-            DATA.hasLogin = true;
-            return;
-        }
-        alert(resData.msg);
-    });
+    changeLoginRegister();
+    setLogoutEvent();
+    setLoginEvent();
+    /** 设置登录事件 */
+    function setLoginEvent() {
+        var loginPageEle = document.querySelector('.poncon-login');
+        var loginBtn = loginPageEle.querySelector('.login-btn');
+        var loginNameEleOfLogin = loginPageEle.querySelector('.input-username');
+        var passwordEleOfLogin = loginPageEle.querySelector('.input-password');
+        // 回车聚焦到密码输入框
+        loginNameEleOfLogin.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                passwordEleOfLogin.focus();
+        });
+        // 回车点击登录
+        passwordEleOfLogin.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                loginBtn.click();
+        });
+        loginBtn.addEventListener('click', function () {
+            var loginName = loginNameEleOfLogin.value;
+            var password = passwordEleOfLogin.value;
+            if (!loginName.match(/^\w{4,20}$/))
+                return alert('用户名长度为4-20个字符');
+            if (!password.match(/^\w{4,20}$/))
+                return alert('密码长度为4-20个字符');
+            var passwordMd5 = md5(password);
+            var resData = getLoginRes(loginName, passwordMd5);
+            var code = resData.code;
+            if (code == 200) {
+                location.hash = '';
+                DATA.hasVerLogin = true;
+                DATA.hasLogin = true;
+                return;
+            }
+            alert(resData.msg);
+        });
+    }
+    /** 设置退出登录 */
+    function setLogoutEvent() {
+        var logoutBtn = document.querySelector('.poncon-user .logout');
+        var logoutBtn2 = document.querySelector('.menu-bottom-list .logout');
+        var clickEvent = function () {
+            if (!confirm('确定要退出登录吗？'))
+                return;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/logout', false);
+            xhr.send();
+            location.reload();
+        };
+        logoutBtn.addEventListener('click', clickEvent);
+        logoutBtn2.addEventListener('click', clickEvent);
+    }
+    /** 切换登录和注册页面显示 */
+    function changeLoginRegister() {
+        /** 提示：已有账号？点击登录 */
+        var loginMsg = document.querySelector('.poncon-login .login-msg');
+        /** 提示：没有账号？点击注册 */
+        var registerMsg = document.querySelector('.poncon-login .register-msg');
+        /** 登录盒子 */
+        var loginBoxEle = document.querySelector('.poncon-login .box.login');
+        /** 注册盒子 */
+        var registerBoxEle = document.querySelector('.poncon-login .box.register');
+        loginMsg.addEventListener('click', function () {
+            loginBoxEle.style.display = 'block';
+            registerBoxEle.style.display = 'none';
+        });
+        registerMsg.addEventListener('click', function () {
+            loginBoxEle.style.display = 'none';
+            registerBoxEle.style.display = 'block';
+        });
+    }
 }
