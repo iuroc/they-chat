@@ -116,7 +116,7 @@ exports.postLogin = (0, express_1.Router)().post('/login', postVerLogin, functio
     };
     res.cookie('loginName', req.body.loginName, options);
     res.cookie('password', req.body.password, options);
-    (0, util_1.printSuc)(res, null, '成功');
+    (0, util_1.printSuc)(res, null, '登录成功');
 });
 /** 校验 Cookie */
 function verCookie(req, res) {

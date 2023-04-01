@@ -140,6 +140,7 @@ function addClickEvent() {
     changeLoginRegister()
     setLogoutEvent()
     setLoginEvent()
+    setRegisterEvent()
     /** 设置登录事件 */
     function setLoginEvent() {
         const loginPageEle = document.querySelector('.poncon-login') as HTMLDivElement
@@ -161,6 +162,57 @@ function addClickEvent() {
             if (!password.match(/^\w{4,20}$/)) return alert('密码长度为4-20个字符')
             let passwordMd5 = md5(password)
             const resData = getLoginRes(loginName, passwordMd5)
+            let code = resData.code
+            if (code == 200) {
+                location.hash = ''
+                DATA.hasVerLogin = true
+                DATA.hasLogin = true
+                return
+            }
+            alert(resData.msg)
+        })
+    }
+    /** 设置注册事件 */
+    function setRegisterEvent() {
+        const loginPageEle = document.querySelector('.poncon-login') as HTMLDivElement
+        const registerSubPageEle = loginPageEle.querySelector('.box.register') as HTMLDivElement
+        const registerBtn = registerSubPageEle.querySelector('.register-btn') as HTMLDivElement
+        const nickNameEleOfRegister = registerSubPageEle.querySelector('.input-nickname') as HTMLInputElement
+        const userNameEleOfRegister = registerSubPageEle.querySelector('.input-username') as HTMLInputElement
+        const emailEleOfRegister = registerSubPageEle.querySelector('.input-email') as HTMLInputElement
+        const passwordEleOfRegister = registerSubPageEle.querySelector('.input-password') as HTMLInputElement
+        const password2EleOfRegister = registerSubPageEle.querySelector('.input-password2') as HTMLInputElement
+        nickNameEleOfRegister.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') userNameEleOfRegister.focus()
+        })
+        userNameEleOfRegister.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') emailEleOfRegister.focus()
+        })
+        emailEleOfRegister.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') passwordEleOfRegister.focus()
+        })
+        passwordEleOfRegister.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') password2EleOfRegister.focus()
+        })
+        // 回车点击登录
+        password2EleOfRegister.addEventListener('keyup', (event) => {
+            if (event.key == 'Enter') registerBtn.click()
+        })
+        registerBtn.addEventListener('click', () => {
+            let userName = userNameEleOfRegister.value
+            let password = passwordEleOfRegister.value
+            let password2 = password2EleOfRegister.value
+            let nickName = nickNameEleOfRegister.value
+            let email = emailEleOfRegister.value
+            if (password != password2) return alert('两次输入的不一致')
+            if (!userName.match(/^\w{4,20}$/)) return alert('用户名长度为4-20个字符')
+            if (!password.match(/^\w{4,20}$/)) return alert('密码长度为4-20个字符')
+            let passwordMd5 = md5(password)
+            const xhr = new XMLHttpRequest()
+            xhr.open('POST', '/register', false)
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+            xhr.send(encode({ userName, password: passwordMd5, nickName, email }))
+            const resData = JSON.parse(xhr.responseText)
             let code = resData.code
             if (code == 200) {
                 location.hash = ''

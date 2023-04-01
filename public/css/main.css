@@ -101,6 +101,10 @@ body {
     background-color: #aaaaaa !important;
 }
 
+.hide-scroll::-webkit-scrollbar {
+    width: 0;
+}
+
 .btn-success {
     padding: 8px 0;
     text-align: center;

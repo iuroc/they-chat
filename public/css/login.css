@@ -1,7 +1,8 @@
 .poncon-login {
     display: flex;
-    justify-content: center;
+    overflow: auto;
     align-items: center;
+    justify-content: center;
 }
 
 .poncon-login .box {
@@ -23,6 +24,7 @@
     outline: none;
     border: 1px solid #cccccc;
     border-radius: 5px;
+    max-width: 250px;
 }
 
 .poncon-login .msg {

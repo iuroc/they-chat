@@ -39,26 +39,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var util_1 = require("../util");
 var db_1 = require("../db");
-var cookieParser = require("cookie-parser");
 var express_validator_1 = require("express-validator");
 var config_1 = require("../config");
 /** 用户注册 */
-exports.default = (0, express_1.Router)().get('/register', cookieParser(), (0, express_validator_1.cookie)('userName').custom(function (input) { return input.match(/^\w{4,20}$/); }).withMessage('用户名长度为4-20个字符'), (0, express_validator_1.cookie)('email').isEmail().withMessage('邮箱格式错误'), (0, express_validator_1.cookie)('password').custom(function (input) { return input.match(/^\w{32}$/); }).withMessage('密码格式错误'), (0, express_validator_1.cookie)('nickName').notEmpty().withMessage('昵称不能为空'), db_1.initDatabase, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userName, email, passwordMd5, nickName;
+exports.default = (0, express_1.Router)().post('/register', (0, express_validator_1.body)('userName').custom(function (input) { return input.match(/^\w{4,20}$/); }).withMessage('用户名长度为4-20个字符'), (0, express_validator_1.body)('email').isEmail().withMessage('邮箱格式错误'), (0, express_validator_1.body)('password').custom(function (input) { return input.match(/^\w{32}$/); }).withMessage('密码格式错误'), (0, express_validator_1.body)('nickName').notEmpty().withMessage('昵称不能为空'), db_1.initDatabase, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var errors, userName, email, passwordMd5, nickName;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                userName = req.cookies.userName;
-                email = req.cookies.email;
-                passwordMd5 = req.cookies.password;
-                nickName = req.cookies.nickName;
+                errors = (0, express_validator_1.validationResult)(req);
+                if (!errors.isEmpty())
+                    return [2 /*return*/, (0, util_1.printErr)(res, errors.array()[0].msg)];
+                userName = req.body.userName;
+                email = req.body.email;
+                passwordMd5 = req.body.password;
+                nickName = req.body.nickName;
                 return [4 /*yield*/, isExists(res, req)];
             case 1:
                 _b.sent();
                 (_a = req.conn) === null || _a === void 0 ? void 0 : _a.query("INSERT INTO `".concat(config_1.DB_CONFIG.table.user, "`\n        (`user_name`, `email`, `password_md5`, `nick_name`)\n        VALUES ('").concat(userName, "', '").concat(email, "', '").concat(passwordMd5, "', '").concat(nickName, "')"), function (err) {
                     if (err)
-                        return (0, util_1.printErr)(res, '注册失败');
+                        return (0, util_1.printErr)(res, "\u6CE8\u518C\u5931\u8D25\uFF1A".concat(err.message));
+                    var sixMonthsInMs = 1000 * 60 * 60 * 24 * 30 * 6;
+                    var options = {
+                        maxAge: sixMonthsInMs,
+                        httpOnly: true,
+                    };
+                    res.cookie('loginName', userName, options);
+                    res.cookie('password', passwordMd5, options);
                     (0, util_1.printSuc)(res, null, '注册成功');
                 });
                 return [2 /*return*/];
@@ -70,13 +79,13 @@ function isExists(res, req) {
     return __awaiter(this, void 0, void 0, function () {
         var sql;
         return __generator(this, function (_a) {
-            sql = "SELECT COUNT(*) FROM `".concat(config_1.DB_CONFIG.table.user, "`\n    WHERE 'user_name' = '").concat(req.cookies.userName, "' OR 'email' = '").concat(req.cookies.email, "'");
+            sql = "SELECT COUNT(*) FROM `".concat(config_1.DB_CONFIG.table.user, "`\n    WHERE `user_name` = '").concat(req.body.userName, "' OR `email` = '").concat(req.body.email, "'");
             return [2 /*return*/, new Promise(function (resolve) {
                     var _a;
                     (_a = req.conn) === null || _a === void 0 ? void 0 : _a.query(sql, function (err, result) {
                         if (err)
                             return (0, util_1.printErr)(res, err.message);
-                        if (result[0]['COUNT(*)'] == 0)
+                        if (result[0]['COUNT(*)'] > 0)
                             return (0, util_1.printErr)(res, '用户名或邮箱已存在');
                         resolve(null);
                     });

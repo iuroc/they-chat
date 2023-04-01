@@ -318,6 +318,7 @@ function addClickEvent() {
     changeLoginRegister();
     setLogoutEvent();
     setLoginEvent();
+    setRegisterEvent();
     /** 设置登录事件 */
     function setLoginEvent() {
         var loginPageEle = document.querySelector('.poncon-login');
@@ -343,6 +344,65 @@ function addClickEvent() {
                 return alert('密码长度为4-20个字符');
             var passwordMd5 = md5(password);
             var resData = getLoginRes(loginName, passwordMd5);
+            var code = resData.code;
+            if (code == 200) {
+                location.hash = '';
+                DATA.hasVerLogin = true;
+                DATA.hasLogin = true;
+                return;
+            }
+            alert(resData.msg);
+        });
+    }
+    /** 设置注册事件 */
+    function setRegisterEvent() {
+        var loginPageEle = document.querySelector('.poncon-login');
+        var registerSubPageEle = loginPageEle.querySelector('.box.register');
+        var registerBtn = registerSubPageEle.querySelector('.register-btn');
+        var nickNameEleOfRegister = registerSubPageEle.querySelector('.input-nickname');
+        var userNameEleOfRegister = registerSubPageEle.querySelector('.input-username');
+        var emailEleOfRegister = registerSubPageEle.querySelector('.input-email');
+        var passwordEleOfRegister = registerSubPageEle.querySelector('.input-password');
+        var password2EleOfRegister = registerSubPageEle.querySelector('.input-password2');
+        nickNameEleOfRegister.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                userNameEleOfRegister.focus();
+        });
+        userNameEleOfRegister.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                emailEleOfRegister.focus();
+        });
+        emailEleOfRegister.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                passwordEleOfRegister.focus();
+        });
+        passwordEleOfRegister.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                password2EleOfRegister.focus();
+        });
+        // 回车点击登录
+        password2EleOfRegister.addEventListener('keyup', function (event) {
+            if (event.key == 'Enter')
+                registerBtn.click();
+        });
+        registerBtn.addEventListener('click', function () {
+            var userName = userNameEleOfRegister.value;
+            var password = passwordEleOfRegister.value;
+            var password2 = password2EleOfRegister.value;
+            var nickName = nickNameEleOfRegister.value;
+            var email = emailEleOfRegister.value;
+            if (password != password2)
+                return alert('两次输入的不一致');
+            if (!userName.match(/^\w{4,20}$/))
+                return alert('用户名长度为4-20个字符');
+            if (!password.match(/^\w{4,20}$/))
+                return alert('密码长度为4-20个字符');
+            var passwordMd5 = md5(password);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/register', false);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send((0, querystring_1.encode)({ userName: userName, password: passwordMd5, nickName: nickName, email: email }));
+            var resData = JSON.parse(xhr.responseText);
             var code = resData.code;
             if (code == 200) {
                 location.hash = '';

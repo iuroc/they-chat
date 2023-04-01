@@ -38,7 +38,7 @@ async function initTables(res: ApiResponse, conn: Pool) {
     await new Promise(resolve => {
         conn.query(`CREATE TABLE IF NOT EXISTS \`${DB_CONFIG.table.user}\` (
             \`id\` INT AUTO_INCREMENT PRIMARY KEY COMMENT '用户ID，只用于索引',
-            \`nick_name\` VARCHAR(255) UNIQUE COMMENT '用户昵称',
+            \`nick_name\` VARCHAR(255) COMMENT '用户昵称',
             \`user_name\` VARCHAR(255) UNIQUE COMMENT '用户名，可用于登录',
             \`email\` VARCHAR(255) UNIQUE COMMENT '邮箱，可用于登录',
             \`password_md5\` VARCHAR(255) COMMENT '密码的md5密文',

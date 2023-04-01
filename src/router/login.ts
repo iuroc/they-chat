@@ -58,7 +58,7 @@ export const postLogin = Router().post('/login', postVerLogin, (req: ApiRequest,
     }
     res.cookie('loginName', req.body.loginName, options)
     res.cookie('password', req.body.password, options)
-    printSuc(res, null, '成功')
+    printSuc(res, null, '登录成功')
 })
 
 /** 校验 Cookie */
